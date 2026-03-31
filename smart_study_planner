@@ -1,0 +1,63 @@
+# Smart Study Planner 
+
+import datetime
+import random
+
+
+class Task:
+    def __init__(self, name, deadline, importance):
+        self.name = name
+        self.deadline = datetime.datetime.strptime(deadline, "%Y-%m-%d")
+        self.importance = importance  
+        self.completed = False
+
+    def __str__(self):
+        return f"{self.name} | Deadline: {self.deadline.date()} | Importance: {self.importance} | Done: {self.completed}"
+
+def calculate_priority(task):
+    days_left = (task.deadline - datetime.datetime.now()).days
+    # Simple AI logic: urgency + importance
+    urgency_score = max(0, 10 - days_left)  
+    priority = urgency_score + task.importance
+    return priority
+
+def suggest_schedule(tasks):
+    tasks_sorted = sorted(tasks, key=lambda t: calculate_priority(t), reverse=True)
+    print("\n--- Suggested Study Plan ---")
+    for i, task in enumerate(tasks_sorted, 1):
+        print(f"{i}. {task.name} (Priority: {calculate_priority(task)})")
+
+def give_reminders(tasks):
+    print("\n--- Reminders ---")
+    for task in tasks:
+        days_left = (task.deadline - datetime.datetime.now()).days
+        if days_left <= 2 and not task.completed:
+            print(f"Urgent: '{task.name}' is due in {days_left} days!")
+        elif not task.completed:
+            print(f"Keep working on '{task.name}', {days_left} days left.")
+
+def motivational_quote():
+    quotes = [
+        "Stay focused, success is near!",
+        "Small steps today lead to big results tomorrow.",
+        "Don’t wait for the deadline, beat it early!",
+        "Your future self will thank you for studying now."
+    ]
+    print("\n Motivation:", random.choice(quotes))
+
+if __name__ == "__main__":
+    tasks = [
+        Task("Math Assignment", "2026-04-05", 4),
+        Task("Physics Lab Report", "2026-04-02", 5),
+        Task("Digital Literacy Case Study", "2026-04-10", 3),
+    ]
+
+    print("--- Your Tasks ---")
+    for t in tasks:
+        print(t)
+
+    suggest_schedule(tasks)
+
+    give_reminders(tasks)
+
+    motivational_quote()
